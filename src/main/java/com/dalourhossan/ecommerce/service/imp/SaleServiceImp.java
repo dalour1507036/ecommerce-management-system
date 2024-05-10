@@ -22,4 +22,9 @@ public class SaleServiceImp implements SaleService {
 //        LocalDate specificDate = LocalDate.of(2024, 4, 30);
         return orderRepository.getTotalSaleAmountForCurrentDay(currentDate);
     }
+
+    @Override
+    public LocalDate getMaxSaleDay(LocalDate startDate, LocalDate endDate) {
+        return orderRepository.findMaxSaleDateInRange(startDate, endDate);
+    }
 }
