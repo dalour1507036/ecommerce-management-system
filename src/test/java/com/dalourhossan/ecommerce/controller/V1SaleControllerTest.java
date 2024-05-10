@@ -1,6 +1,7 @@
 package com.dalourhossan.ecommerce.controller;
 
 import com.dalourhossan.ecommerce.controller.api.v1.V1SaleController;
+import com.dalourhossan.ecommerce.entity.Product;
 import com.dalourhossan.ecommerce.service.SaleService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -48,6 +51,24 @@ public class V1SaleControllerTest {
         ResponseEntity<LocalDate> actualMaxSaleDay = v1SaleController.getMaxSaleDay(startDate.toString(), endDate.toString());
 
         assertEquals(expectedMaxSaleDay, actualMaxSaleDay.getBody());
+    }
 
+    @Test
+    public void testGetTopSellingItems() {
+        Product product1 = new Product();
+        product1.setName("product1");
+        product1.setDescription("product1 description");
+        product1.setPrice(100);
+
+        Product product2 = new Product();
+        product2.setName("product2");
+        product2.setDescription("product2 description");
+        product2.setPrice(200);
+
+        List<Product> expectedTopItems = Arrays.asList(product1, product2);
+        when(saleService.getTopSellingItems(2)).thenReturn(expectedTopItems);
+        List<Product> actualTopItems = v1SaleController.getTopSellingItems(2);
+
+        assertEquals(expectedTopItems, actualTopItems);
     }
 }
