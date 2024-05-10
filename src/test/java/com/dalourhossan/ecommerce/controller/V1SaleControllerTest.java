@@ -2,6 +2,7 @@ package com.dalourhossan.ecommerce.controller;
 
 import com.dalourhossan.ecommerce.controller.api.v1.V1SaleController;
 import com.dalourhossan.ecommerce.entity.Product;
+import com.dalourhossan.ecommerce.service.OrderItemService;
 import com.dalourhossan.ecommerce.service.SaleService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -27,6 +28,8 @@ public class V1SaleControllerTest {
     private V1SaleController v1SaleController;
     @Mock
     private SaleService saleService;
+    @Mock
+    private OrderItemService orderItemService;
     @Autowired
     private MockMvc mockMvc;
 
@@ -66,9 +69,9 @@ public class V1SaleControllerTest {
         product2.setPrice(200);
 
         List<Product> expectedTopItems = Arrays.asList(product1, product2);
-        when(saleService.getTopSellingItems(2)).thenReturn(expectedTopItems);
-        List<Product> actualTopItems = v1SaleController.getTopSellingItems(2);
+        when(orderItemService.getTopSellingItems(2)).thenReturn(expectedTopItems);
+        ResponseEntity<List<Product>> actualTopItems = v1SaleController.getTopSellingItems(2);
 
-        assertEquals(expectedTopItems, actualTopItems);
+        assertEquals(expectedTopItems, Objects.requireNonNull(actualTopItems.getBody()).stream().toList());
     }
 }
