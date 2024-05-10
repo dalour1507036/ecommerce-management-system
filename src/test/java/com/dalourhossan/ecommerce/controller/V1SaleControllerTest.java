@@ -3,6 +3,7 @@ package com.dalourhossan.ecommerce.controller;
 import com.dalourhossan.ecommerce.controller.api.v1.V1SaleController;
 import com.dalourhossan.ecommerce.entity.Product;
 import com.dalourhossan.ecommerce.service.OrderItemService;
+import com.dalourhossan.ecommerce.service.OrderService;
 import com.dalourhossan.ecommerce.service.SaleService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -30,6 +31,8 @@ public class V1SaleControllerTest {
     private SaleService saleService;
     @Mock
     private OrderItemService orderItemService;
+    @Mock
+    private OrderService orderService;
     @Autowired
     private MockMvc mockMvc;
 
@@ -73,5 +76,26 @@ public class V1SaleControllerTest {
         ResponseEntity<List<Product>> actualTopItems = v1SaleController.getTopSellingItems(2);
 
         assertEquals(expectedTopItems, Objects.requireNonNull(actualTopItems.getBody()).stream().toList());
+    }
+
+    @Test
+    public void testGetTopSellingItemsByMonth() {
+        LocalDate lastMonth = LocalDate.now().minusMonths(1);
+        Product product1 = new Product();
+        product1.setName("product1");
+        product1.setDescription("product1 description");
+        product1.setPrice(100);
+
+        Product product2 = new Product();
+        product2.setName("product2");
+        product2.setDescription("product2 description");
+        product2.setPrice(200);
+
+        List<Product> expectedTopProducts = Arrays.asList(product1, product2);
+        when(orderService.getTopSellingItemsByMonth(2,4)).thenReturn(expectedTopProducts);
+
+        ResponseEntity<List<Product>> actualTopProducts = v1SaleController.getTopSellingItemsByMonth(2, 4);
+
+        assertEquals(expectedTopProducts, Objects.requireNonNull(actualTopProducts.getBody()).stream().toList());
     }
 }
