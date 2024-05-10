@@ -1,53 +1,47 @@
-package com.dalourhossan.ecommerce.controller.api.v1;
+package com.dalourhossan.ecommerce.controller;
 
+import com.dalourhossan.ecommerce.controller.api.v1.V1WishListController;
+import com.dalourhossan.ecommerce.entity.Product;
 import com.dalourhossan.ecommerce.service.WishListService;
-import jakarta.annotation.Resource;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.junit.jupiter.api.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
-
-
-import static net.bytebuddy.matcher.ElementMatchers.is;
-import static org.hamcrest.Matchers.hasSize;
+import java.util.Objects;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-//@AutoConfigureMockMvc
-//@SpringBootTest
-@WebMvcTest(V1WishListController.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
+@SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class V1WishListControllerTest {
+    @InjectMocks
+    private V1WishListController v1WishListController;
 
-//    @Autowired
-    @Resource
-    private MockMvc mockMvc;
-
-//    @MockBean
-//    private WishListService wishListService;
+    @Mock
+    private WishListService wishListService;
 
     @Test
-    public void testGetWishList() throws Exception {
-//        List<Long> wishList = Arrays.asList(1L, 2L, 3L);
-//        when(wishListService.getWishList(1L)).thenReturn(wishList);
+    public void testGetCustomerWishList() {
+        Long customerId = 1L;
 
-        mockMvc.perform(get("/api/v1/wishlist/{customerId}", 1))
-                .andExpect(status().isOk());
-//                .andExpect(jsonPath("$", hasSize(3)))
-//                .andExpect((ResultMatcher) jsonPath("$[0]", is(1)))
-//                .andExpect((ResultMatcher) jsonPath("$[1]", is(2)))
-//                .andExpect((ResultMatcher) jsonPath("$[2]", is(3)));
+        Product product1 = new Product();
+        product1.setName("product1");
+        product1.setDescription("product1 description");
+        product1.setPrice(100);
+
+        Product product2 = new Product();
+        product2.setName("product2");
+        product2.setDescription("product2 description");
+        product2.setPrice(200);
+
+        List<Product> expectedWishList = Arrays.asList(product1, product2);
+        when(wishListService.getWishList(customerId)).thenReturn(expectedWishList);
+
+        ResponseEntity<List<Product>> actualWishList = v1WishListController.getWishLists(customerId);
+
+        Assertions.assertEquals(expectedWishList, Objects.requireNonNull(actualWishList.getBody()).stream().toList());
     }
 }

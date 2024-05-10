@@ -1,5 +1,6 @@
 package com.dalourhossan.ecommerce.controller.api.v1;
 
+import com.dalourhossan.ecommerce.entity.Product;
 import com.dalourhossan.ecommerce.service.WishListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/wishList")
+@RequestMapping("/api/v1/wishlist")
 public class V1WishListController {
     @Autowired
     private WishListService wishListService;
     @GetMapping("/{customerId}")
-    public ResponseEntity<List<Long>> getWishList(@PathVariable Long customerId) {
-        List<Long> wishList = wishListService.getWishList(customerId);
+    public ResponseEntity<List<Product>> getWishLists(@PathVariable Long customerId) {
+        List<Product> wishList = wishListService.getWishList(customerId);
         return ResponseEntity.status(HttpStatus.OK).body(wishList);
     }
 }
