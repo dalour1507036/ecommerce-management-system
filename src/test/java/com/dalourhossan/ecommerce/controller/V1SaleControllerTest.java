@@ -5,8 +5,11 @@ import com.dalourhossan.ecommerce.service.SaleService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -15,11 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@AutoConfigureMockMvc
 public class V1SaleControllerTest {
     @InjectMocks
     private V1SaleController v1SaleController;
     @Mock
     private SaleService saleService;
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
     public void testGetTotalSaleAmountOfCurrentDay() {
@@ -30,5 +36,18 @@ public class V1SaleControllerTest {
         ResponseEntity<Double> actualTotalSale = v1SaleController.getTotalSaleAmountOfCurrentDay();
 
         assertEquals(expectedTotalSale, Objects.requireNonNull(actualTotalSale.getBody()), 0.001);
+    }
+
+    @Test
+    public void testGetMaxSaleDayByRange() {
+        LocalDate startDate = LocalDate.of(2024, 5, 1);
+        LocalDate endDate = LocalDate.of(2024, 5, 10);
+        LocalDate expectedMaxSaleDay = LocalDate.of(2024, 5, 5);
+        when(saleService.getMaxSaleDay(startDate, endDate)).thenReturn(expectedMaxSaleDay);
+
+        ResponseEntity<LocalDate> actualMaxSaleDay = v1SaleController.getMaxSaleDay(startDate.toString(), endDate.toString());
+
+        assertEquals(expectedMaxSaleDay, actualMaxSaleDay.getBody());
+
     }
 }
