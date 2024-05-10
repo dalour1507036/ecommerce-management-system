@@ -27,6 +27,18 @@ public class Customer {
     @JsonManagedReference
     private List<WishList> wishList;
 
+    @OneToMany(mappedBy = "customer",fetch = FetchType.LAZY)
+    @JsonManagedReference
+    private List<Order> orders;
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
     public Long getCustomerId() {
         return customerId;
     }
